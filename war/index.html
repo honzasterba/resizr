@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Resizr - image manipulation service</title>
+  </head>
+
+  <body>
+    <h1><a href="imageresizer">Resizr</a> (alpha)!</h1>
+
+	<h2>Supported parameters:</h2>
+	
+	<ul>
+		<li><strong>url=URL</strong> (required): a HTTP URL of an image</li>
+		<li><strong>op=STRING</strong>: a list of operations to be performed on the image (see below)</li>
+	</ul>
+
+	
+	<h2>Supported operations:</h2>
+	
+	<ul>
+		<li><strong>resize</strong>: resize the image to fit given dimensions 
+			<ul>
+				<li>resize,N - fit image into square NxN (for example resize=100)</li>
+				<li>resize,W,H - fit image into square WxH (for example resize=50,100)</li>
+			</ul>
+		</li>
+		<li><strong>crop</strong>: crop the specified area of the image
+			<ul>
+				<li>crop,X,Y,W,H - crop the rectangle defined by parameters</li>
+				<li>crop,X,Y,D - crop the area around X,Y with diameter D</li>
+			</ul>
+		</li>
+		<li><strong>rotate,DEG</strong>: rotate the images in degrees (must by multiple of 90)</li>
+		<li><strong>hflip</strong>: flip the image horizontally</li>
+		<li><strong>vflip</strong>: flip the image vertically</li>
+	</ul>
+	
+	<h2>Examples:</h2>
+	
+	<ul>
+		<li>?url=http://.../image.jpeg&op=vflip - flip the image vertically</li>
+		<li>?url=http://.../image.jpeg&op=resize,200,300 - resize to fit 200x300</li>
+		<li>?url=http://.../image.jpeg&op=resize,200,crop,50,50,10 
+		- resize to fit 200x200 and then crop the are around 50,50</li>
+		<li>?url=http://.../image.jpeg&op=rotate,90,crop,50,50,10 
+		- rotate by 90 degrees and then crop the are around 50,50</li>
+		<li>?url=http://.../image.jpeg&op=hflip,rotate,90,crop,50,50,10,vflip 
+		- horizontal flip, rotate, crop and vertical flip in the end</li>
+	</ul>
+	
+  </body>
+</html>
