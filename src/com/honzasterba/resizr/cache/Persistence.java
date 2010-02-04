@@ -1,4 +1,4 @@
-package com.honzasterba.resizr;
+package com.honzasterba.resizr.cache;
 
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
@@ -13,4 +13,5 @@ public final class Persistence {
 	public static PersistenceManagerFactory get() {
 		return pmfInstance;
 	}
+
 }

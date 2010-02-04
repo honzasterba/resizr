@@ -8,7 +8,13 @@
   <body>
     <h1><a href="imageresizer">Resizr</a> (alpha)!</h1>
 
-	<h2>Supported parameters:</h2>
+	<h2>It caches!</h2>
+
+	<p>Served images are cached and repeating request do not touch the original 
+	source most of the time. Right now the cache never expires so feel free to
+	fill up my free storage. I will wipe it mercy-lessly anyway.
+
+	<h2>Supported parameters</h2>
 	
 	<ul>
 		<li><strong>url=URL</strong> (required): a HTTP URL of an image</li>
@@ -16,7 +22,7 @@
 	</ul>
 
 	
-	<h2>Supported operations:</h2>
+	<h2>Supported operations</h2>
 	
 	<ul>
 		<li><strong>resize</strong>: resize the image to fit given dimensions 
@@ -36,7 +42,7 @@
 		<li><strong>vflip</strong>: flip the image vertically</li>
 	</ul>
 	
-	<h2>Examples:</h2>
+	<h2>Examples</h2>
 	
 	<ul>
 		<li>?url=http://.../image.jpeg&op=vflip - flip the image vertically</li>

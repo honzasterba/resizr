@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.images.CompositeTransform;
 import com.google.appengine.api.images.Image;
 import com.google.appengine.api.images.ImagesServiceFactory;
+import com.honzasterba.resizr.cache.Cachr;
 import com.honzasterba.resizr.img.Fetchr;
 import com.honzasterba.resizr.img.Parsr;
 
@@ -34,43 +35,60 @@ public class ImageResizerServlet extends HttpServlet {
 
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
-		Image img = null;
 		String url = req.getParameter(PARAM_URL);
+		String ops = req.getParameter(PARAM_OP);
 		if (url == null) {
 			fail(resp, "No image URL given.");
 			return;
 		}
+		Image result = Cachr.get(url, ops);
+		if (result != null) {
+			render(resp, result);
+		} else {
+			result = fetchAndTransform(resp, url, ops);
+			if (result != null) {
+				Cachr.put(url, ops, result.getImageData());
+			} else {
+				// there was an error
+				return;
+			}
+			render(resp, result);
+		}
+		
+	}
+
+	private Image fetchAndTransform(HttpServletResponse resp, String url,
+			String ops) throws IOException {
+		Image img = null;
 		try {
 			img = Fetchr.fetchImage(url);
 		} catch (Exception e) {
 			fail(resp, "Unable to load image from " + url + ".", e);
-			return;
+			return null;
 		}
 		CompositeTransform composite = ImagesServiceFactory
 				.makeCompositeTransform();
 		Parsr p = makeParsr(composite, img);
 		boolean transformed = false;
 		try {
-			transformed = p.parse(req.getParameter(PARAM_OP));
+			transformed = p.parse(ops);
 		} catch (Exception e) {
 			fail(resp, "Unable to parse params.", e);
-			return;
+			return null;
 		}
 		if (transformed) {
-			Image result = ImagesServiceFactory.getImagesService().applyTransform(
+			return ImagesServiceFactory.getImagesService().applyTransform(
 					composite, img);
-			render(resp, result);
 		} else {
-			render(resp, img);
+			return img;
 		}
-		
 	}
-	
+
 	private void render(HttpServletResponse resp, Image img) throws IOException {
 		resp.setContentType(FORMAT_TO_TYPE.get(img.getFormat()));
 		resp.getOutputStream().write(img.getImageData());
 	}
-	
+
 	private void fail(HttpServletResponse resp, String message)
 			throws IOException {
 		fail(resp, message, null);
@@ -88,8 +106,9 @@ public class ImageResizerServlet extends HttpServlet {
 			cause.printStackTrace(out);
 		}
 	}
-	
-	private Parsr makeParsr(final CompositeTransform composite, final Image image) {
+
+	private Parsr makeParsr(final CompositeTransform composite,
+			final Image image) {
 		return new Parsr() {
 			@Override
 			protected void onVFlip() {
