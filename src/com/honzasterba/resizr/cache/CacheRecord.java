@@ -8,21 +8,20 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 
-import com.google.appengine.api.datastore.Blob;
+import org.honzasterba.bigblobae.BigBlob;
+
+import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable(identityType=IdentityType.APPLICATION)
 public class CacheRecord {
 	
-    @PrimaryKey
-    @Persistent(valueStrategy = IdGeneratorStrategy.SEQUENCE)
-	private String id;
+	@PrimaryKey
+	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	private Key key;
 	
 	@Persistent
 	private String url;
 
-	@Persistent
-	private int fragmentIndex;
-	
 	@Persistent
 	private String params;
 
@@ -33,28 +32,19 @@ public class CacheRecord {
 	private Date lastAccessed;
 
 	@Persistent
-	private Blob data;
+	private BigBlob dataBlob;
 
-	public CacheRecord(String aUrl, String aParams, byte[] aData, int aFragmentIndex) {
+	public CacheRecord(String aUrl, String aParams, byte[] aData) {
 		url = aUrl;
-		if (aParams != null) {
-			params = aParams;
-		} else {
+		if (aParams == null) {
 			params = "";
+		} else {
+			params = aParams;
 		}
-		data = new Blob(aData);
-		fragmentIndex = aFragmentIndex;
+		dataBlob = new BigBlob(aData);
 		created = lastAccessed = new Date();
 	}
 	
-	public String getId() {
-		return id;
-	}
-	
-	public int getFragmentIndex() {
-		return fragmentIndex;
-	}
-
 	public String getUrl() {
 		return url;
 	}
@@ -74,9 +64,13 @@ public class CacheRecord {
 	public void setLastAccessed(Date lastAccessed) {
 		this.lastAccessed = lastAccessed;
 	}
+	
+	public BigBlob getDataBlob() {
+		return dataBlob;
+	}
 
 	public byte[] getData() {
-		return data.getBytes();
+		return getDataBlob().getData();
 	}
 
 }
