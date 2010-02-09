@@ -10,8 +10,6 @@ import com.google.appengine.api.images.ImagesServiceFactory;
 
 public class Cachr {
 
-	public static final int LIMIT = 777 * 1024;
-
 	public static Logger logger = Logger.getLogger(Cachr.class.getPackage()
 			.getName());
 
